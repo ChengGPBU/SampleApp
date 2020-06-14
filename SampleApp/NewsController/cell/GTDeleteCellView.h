@@ -11,8 +11,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface GTDeleteCellView : UIView
-- (void) showDeleteView;
-- (void) dismissDeleteView;
+- (void)showDeleteView;
+- (void)dismissDeleteView;
 - (void)showDeleteViewFromPonit:(CGPoint)point clickBlock:(dispatch_block_t)clickBlock;
 @end
 

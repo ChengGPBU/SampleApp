@@ -35,6 +35,9 @@
     for (int i = 0; i < 5; i++) {
         [scrollView addSubview:({
             UIView *view = [[UIView alloc] initWithFrame:CGRectMake(scrollView.bounds.size.width*i, 0, scrollView.bounds.size.width, scrollView.bounds.size.height)];
+            
+            UIImage *image2x = [UIImage imageNamed: @"icon_takeaway"];
+            
             [view addSubview:({
                 UIView *innerView = [[UIView alloc] initWithFrame:CGRectMake(100, 200, 100, 100)];
                 innerView.backgroundColor= [UIColor blackColor];

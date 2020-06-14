@@ -10,8 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface GTVideoToolBar : UIView
+#define GTVideoToolBarHeight 60
 
+@interface GTVideoToolBar : UIView
+- (void)layoutWithModel:(id)model;
 @end
 
 NS_ASSUME_NONNULL_END

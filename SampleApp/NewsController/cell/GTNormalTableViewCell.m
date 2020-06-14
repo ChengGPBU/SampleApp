@@ -8,6 +8,10 @@
 
 #import "GTNormalTableViewCell.h"
 #import "GTListItem.h"
+#import "SDWebImage.h"
+#import "GTScreen.h"
+
+
 
 @interface GTNormalTableViewCell()
 
@@ -32,7 +36,7 @@
     
     if(self) {
         [self.contentView addSubview:({
-            self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 15, 270, 50)];
+            self.titleLabel = [[UILabel alloc] initWithFrame:UIRect(20, 15, 270, 50)];
             self.titleLabel.font = [UIFont systemFontOfSize:16];
             self.titleLabel.textColor = [UIColor blackColor];
             self.titleLabel.numberOfLines = 2;
@@ -41,44 +45,44 @@
         })];
         
         [self.contentView addSubview:({
-            self.sourceLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 70, 50, 20)];
+            self.sourceLabel = [[UILabel alloc] initWithFrame:UIRect(20, 70, 50, 20)];
             self.sourceLabel.font = [UIFont systemFontOfSize:12];
             self.sourceLabel.textColor = [UIColor grayColor];
             self.sourceLabel;
         })];
         
         [self.contentView addSubview:({
-            self.commentLabel = [[UILabel alloc] initWithFrame:CGRectMake(100, 70, 50, 20)];
+            self.commentLabel = [[UILabel alloc] initWithFrame:UIRect(100, 70, 50, 20)];
             self.commentLabel.font = [UIFont systemFontOfSize:12];
             self.commentLabel.textColor = [UIColor grayColor];
             self.commentLabel;
         })];
         
         [self.contentView addSubview:({
-            self.timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(150, 70, 50, 20)];
+            self.timeLabel = [[UILabel alloc] initWithFrame:UIRect(150, 70, 50, 20)];
             self.timeLabel.font = [UIFont systemFontOfSize:12];
             self.timeLabel.textColor = [UIColor grayColor];
             self.timeLabel;
         })];
         
         [self.contentView addSubview: ({
-            self.rightImageView = [[UIImageView alloc] initWithFrame:CGRectMake(280, 15, 100, 70)];
+            self.rightImageView = [[UIImageView alloc] initWithFrame:UIRect(310, 15, 100, 70)];
             self.rightImageView.backgroundColor = [UIColor redColor];
             self.rightImageView;
         })];
 
-        [self.contentView addSubview: ({
-            self.button = [[UIButton alloc] initWithFrame:CGRectMake(210, 70, 30, 20)];
-            [self.button setTitle:@"x" forState:UIControlStateNormal];
-            [self.button setTitle:@"y" forState:UIControlStateHighlighted];
-            [self.button addTarget:self action:@selector(buttonClick) forControlEvents:UIControlEventTouchUpInside];
-            self.button.backgroundColor = [UIColor blueColor];
-            self.button.layer.cornerRadius = 10;
-            self.button.layer.masksToBounds = YES;
-            self.button.layer.borderColor = [UIColor lightGrayColor].CGColor;
-            self.button.layer.borderWidth = 2;
-            self.button;
-        })];
+//        [self.contentView addSubview: ({
+//            self.button = [[UIButton alloc] initWithFrame:UIRect(210, 70, 30, 20)];
+//            [self.button setTitle:@"x" forState:UIControlStateNormal];
+//            [self.button setTitle:@"y" forState:UIControlStateHighlighted];
+//            [self.button addTarget:self action:@selector(buttonClick) forControlEvents:UIControlEventTouchUpInside];
+//            self.button.backgroundColor = [UIColor blueColor];
+//            self.button.layer.cornerRadius = 10;
+//            self.button.layer.masksToBounds = YES;
+//            self.button.layer.borderColor = [UIColor lightGrayColor].CGColor;
+//            self.button.layer.borderWidth = 2;
+//            self.button;
+//        })];
 
         
     }
@@ -99,24 +103,34 @@
 
     self.commentLabel.text = item.category;
     [self.commentLabel sizeToFit];
-    self.commentLabel.frame = CGRectMake(self.sourceLabel.frame.origin.x + self.sourceLabel.frame.size.width+15 , self.commentLabel.frame.origin.y, self.commentLabel.frame.size.width,self.commentLabel.frame.size.height);
+    self.commentLabel.frame = CGRectMake(self.sourceLabel.frame.origin.x + self.sourceLabel.frame.size.width+UI(15) , self.commentLabel.frame.origin.y, self.commentLabel.frame.size.width,self.commentLabel.frame.size.height);
 
     self.timeLabel.text = item.date;
     [self.timeLabel sizeToFit];
-    self.timeLabel.frame = CGRectMake(self.commentLabel.frame.origin.x + self.commentLabel.frame.size.width+15 , self.timeLabel.frame.origin.y, self.timeLabel.frame.size.width,self.timeLabel.frame.size.height);
+    self.timeLabel.frame = CGRectMake(self.commentLabel.frame.origin.x + self.commentLabel.frame.size.width+UI(15) , self.timeLabel.frame.origin.y, self.timeLabel.frame.size.width,self.timeLabel.frame.size.height);
 
 #warning
+    // 手动优化 通过在子线程中加载 异步加载图片 解决图片加载导致的页面渲染缓慢的问题
     // 获取一个全局队列
-    dispatch_queue_global_t downLoadQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    // 获取一个主队列
-    dispatch_queue_main_t mainQueue = dispatch_get_main_queue();
+//    dispatch_queue_global_t downLoadQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+//    // 获取一个主队列
+//    dispatch_queue_main_t mainQueue = dispatch_get_main_queue();
+//
+//    dispatch_async(downLoadQueue, ^{
+//        UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:item.picUrl]]];
+//        dispatch_async(mainQueue, ^{
+//            self.rightImageView.image = image;
+//        });
+//    });
     
-    dispatch_async(downLoadQueue, ^{
-        UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:item.picUrl]]];
-        dispatch_async(mainQueue, ^{
-            self.rightImageView.image = image;
-        });
-    });
+    
+    [self.rightImageView sd_setImageWithURL:[NSURL URLWithString: item.picUrl] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+        NSLog(@"item image load completed！！！");
+        NSLog(@"item image load completed！！！",cacheType);
+
+    }];
+    
+    
 }
 
 

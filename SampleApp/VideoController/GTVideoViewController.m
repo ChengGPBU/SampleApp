@@ -7,6 +7,10 @@
 //
 
 #import "GTVideoViewController.h"
+#import "GTVideoCoverView.h"
+#import "GTVideoToolBar.h"
+
+
 
 @interface GTVideoViewController ()<UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
 
@@ -17,7 +21,9 @@
 - (instancetype) init {
     self = [super init];
     if(self) {
-        self.tabBarItem.title = @"视屏";
+        self.tabBarItem.title = @"视频";
+        self.tabBarItem.image = [UIImage imageNamed:@"icon_pickup"];
+
     }
     return self;
 }
@@ -32,14 +38,19 @@
     
     flowLayout.minimumLineSpacing  = 10;
     flowLayout.minimumInteritemSpacing = 10;
-    flowLayout.itemSize = CGSizeMake((self.view.frame.size.width - 10)/2 , 300);
-    
+    flowLayout.itemSize = CGSizeMake(self.view.bounds.size.width , self.view.bounds.size.width /16 * 9 + GTVideoToolBarHeight);
     
     UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame: self.view.bounds collectionViewLayout:flowLayout];
+    // 8 9 10 没有这个属性  不自动适配 手动适配
+//    if (@available(iOS 11.0, *)) {
+//        collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+//    } else {
+//        // Fallback on earlier versions
+//    }
     
     collectionView.delegate = self;
     collectionView.dataSource = self;
-    [collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"11111"];
+    [collectionView registerClass:[GTVideoCoverView class] forCellWithReuseIdentifier:@"GTVideoCoverView"];
     
     [self.view addSubview:collectionView];
 
@@ -62,18 +73,22 @@
 
 // The cell that is returned must be retrieved from a call to -dequeueReusableCellWithReuseIdentifier:forIndexPath:
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"11111" forIndexPath:indexPath ];
-    cell.backgroundColor = [UIColor redColor];
+    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"GTVideoCoverView" forIndexPath:indexPath ];
+    if ([cell isKindOfClass:[GTVideoCoverView class]]) {
+        [((GTVideoCoverView * )cell) layoutWithVideoCoverUrl:@"icon_pickup" videoUrl:@"https://v-cdn.zjol.com.cn/280443.mp4"];
+    }
     return cell;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
 
-    if(indexPath.item %3 == 0) {
-        return CGSizeMake(self.view.frame.size.width, 100);
-    }else {
-        return CGSizeMake((self.view.frame.size.width - 10)/2, 300);
-    }
+//    if(indexPath.item %3 == 0) {
+//        return CGSizeMake(self.view.frame.size.width, 100);
+//    }else {
+//        return CGSizeMake((self.view.frame.size.width - 10)/2, 300);
+//    }
+    
+    return CGSizeMake(self.view.bounds.size.width , self.view.bounds.size.width /16 * 9 + GTVideoToolBarHeight);
     
 }
 @end
